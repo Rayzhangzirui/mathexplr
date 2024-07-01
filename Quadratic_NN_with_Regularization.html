@@ -1,0 +1,1144 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Experimenting with a Quadratic Physics-Informed Neural Network (PINN) &#8212; 2024 UCI Math ExpLR Program</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Quadratic_NN_with_Regularization';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Experimenting with a Linear Physics-Informed Neural Network (PINN)" href="Simple_NN_with_Regularization_recent.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-light" alt="2024 UCI Math ExpLR Program - Home"/>
+    <script>document.write(`<img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-dark" alt="2024 UCI Math ExpLR Program - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Math ExpLr
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Simple_NN_with_Regularization_recent.html"><strong>Experimenting with a Linear Physics-Informed Neural Network (PINN)</strong></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Experimenting with a Quadratic Physics-Informed Neural Network (PINN)</strong></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2FQuadratic_NN_with_Regularization.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/Quadratic_NN_with_Regularization.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Experimenting with a Quadratic Physics-Informed Neural Network (PINN)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-setup"><strong>Problem Setup</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow"><strong>Workflow</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup"><strong>1. Environment Setup</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-noisy-data"><strong>2. Generate Noisy Data</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-neural-network-class"><strong>3. Set up Neural Network Class</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-training-process"><strong>4. Set up training process</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-and-train-our-neural-network"><strong>5. Create and Train our Neural Network</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-regularization-parameter"><strong>6. Modify Regularization Parameter</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-mean-squared-error-mse"><strong>7. Calculate Mean Squared Error (MSE)</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-higher-order-regularization"><strong>8. Working with Higher Order Regularization</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-number-of-layers-and-neurons"><strong>9. Modify number of layers and neurons</strong></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="experimenting-with-a-quadratic-physics-informed-neural-network-pinn">
+<h1><strong>Experimenting with a Quadratic Physics-Informed Neural Network (PINN)</strong><a class="headerlink" href="#experimenting-with-a-quadratic-physics-informed-neural-network-pinn" title="Link to this heading">#</a></h1>
+<p>This notebook contains the code to create a PINN using PyTorch that can fit synthetic data with Gaussian noise around a quadratic function.</p>
+<br>
+<p>Essentially a PINN is a model that uses prior information inside the cost function to make the data more effective on sparse datasets and allows the model to understand deeper trends within the data to fit the ground-truth line outside of the training points as well.</p>
+<section id="problem-setup">
+<h2><strong>Problem Setup</strong><a class="headerlink" href="#problem-setup" title="Link to this heading">#</a></h2>
+<p>We will create a PINN to fit synthetic data with Gaussian noise arund the line.</p>
+<p><br>\begin{equation} y = ax^2 + bx + c \end{equation}<br></p>
+<p>In this instance the prior information in this PINN will look to minimize this basic differential equation.</p>
+<p><br>\begin{equation} \frac{d^3n}{dx^3} \end{equation}<br></p>
+<p>This equation applies our prior information that our data exhibits a quadratic relationship.</p>
+<br>
+<p>In this model we have manipulated the layers and neurons as well as tested out different regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) values. To better understand the impact these changes can make to our PINN.</p>
+</section>
+<section id="workflow">
+<h2><strong>Workflow</strong><a class="headerlink" href="#workflow" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Environment Setup</p></li>
+<li><p>Generate noisy data</p></li>
+<li><p>Set up Neural Network Class</p></li>
+<li><p>Set up training process</p></li>
+<li><p>Create and train a neural network</p></li>
+<li><p>Modify regularization parameter</p></li>
+<li><p>Calculate Mean Squared Error (MSE)</p></li>
+<li><p>Working with higher order regularization</p></li>
+<li><p>Modify number of layers and neurons</p></li>
+</ol>
+</section>
+<section id="environment-setup">
+<h2><strong>1. Environment Setup</strong><a class="headerlink" href="#environment-setup" title="Link to this heading">#</a></h2>
+<p>First we mount the notebook to Google Drive to store all the figures created</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+
+<span class="c1"># Mount Google Drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+
+<span class="n">images_dir</span> <span class="o">=</span> <span class="s1">&#39;/content/drive/MyDrive/quadnn_data&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">os</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># Mount Google Drive</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;google&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Second we create our PINN in PyTorch which requires Python. Once we have both programs downloaded we can import all the torch modules we need as well as NumPy and Matplotlib.</p>
+<p>####<strong>Uses for each program</strong></p>
+<ol class="arabic simple">
+<li><p>PyTorch can store data in tensors and set up the neural network</p></li>
+<li><p>NumPy helps us convert tensors into arrays for plotting</p></li>
+<li><p>Matplotlib creates easy to understand plots</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">random_split</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="generate-noisy-data">
+<h2><strong>2. Generate Noisy Data</strong><a class="headerlink" href="#generate-noisy-data" title="Link to this heading">#</a></h2>
+<p>Using the equation</p>
+<p><br>\begin{equation} y = ax^2 + bx + c + \epsilon \end{equation}<br></p>
+<p>Where <span class="math notranslate nohighlight">\(\epsilon\)</span> is the Gaussian noise; we generate data around the line <span class="math notranslate nohighlight">\(y = ax^2 + bx + c\)</span>.</p>
+<br>
+<p>We create <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> tensors to store the data points in its respective tensor, and store our data using the <code class="docutils literal notranslate"><span class="pre">TensorDataset()</span></code> class which stores a list of tensors essentially making a 2D matrix of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> values</p>
+<p>We also define a <code class="docutils literal notranslate"><span class="pre">ground_truth()</span></code> function which input an <span class="math notranslate nohighlight">\(x\)</span> value into the function <span class="math notranslate nohighlight">\(f(x) = ax^2 + bx + c\)</span> and returns the output.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#create Gaussian noise with mean 0 and variance 0.01</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">g_noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="c1"># no need to set require_grad when creating X,</span>
+<span class="c1"># otherwise there is a computation graph from X to Y.</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">g_noise</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">ground_truth</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[0.0000],
+        [0.1111],
+        [0.2222],
+        [0.3333],
+        [0.4444],
+        [0.5556],
+        [0.6667],
+        [0.7778],
+        [0.8889],
+        [1.0000]])
+tensor([[1.0684],
+        [1.0959],
+        [1.3911],
+        [1.4276],
+        [1.5978],
+        [1.7936],
+        [2.2158],
+        [2.3447],
+        [2.7922],
+        [3.1103]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we plot the noisy data and the ground truth line on the interval <span class="math notranslate nohighlight">\([-1, 2]\)</span> and save this figure to a Google Drive folder.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#plot the data points + line w/out noise</span>
+<span class="n">x_plot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_plot</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ground Truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Noisy Data Around Ground Truth Line&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/noisy_data_truth.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c087a4fb50cfbb9daab6d05033ee8e50c57ede145e852ae2b218e1c9d3ddd3a2.png" src="_images/c087a4fb50cfbb9daab6d05033ee8e50c57ede145e852ae2b218e1c9d3ddd3a2.png" />
+</div>
+</div>
+<p>Loads and prepares our dataset by dividing up the data based on the <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> given and shuffling the data around to prevent the model from learning any order-dependent patterns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#setting up batches in DataLoader</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="set-up-neural-network-class">
+<h2><strong>3. Set up Neural Network Class</strong><a class="headerlink" href="#set-up-neural-network-class" title="Link to this heading">#</a></h2>
+<p>We set up a standard neural network where <code class="docutils literal notranslate"><span class="pre">d</span></code> and <code class="docutils literal notranslate"><span class="pre">w</span></code> represent the number of layers and neurons in the network respectively. Using the Tanh activation function we can introduce non-linearities to allow the model to understand deep trends in seemigly abstract data.</p>
+<br>
+<p>The <code class="docutils literal notranslate"><span class="pre">compute_first_derivative()</span></code> function computes the <span class="math notranslate nohighlight">\(1 - n\)</span>th derivative using PyTorch’s autodifferentiation features.</p>
+<br>
+<p>Our <code class="docutils literal notranslate"><span class="pre">criterion</span></code> object signifies our Mean Squared Error (MSE) loss which lets us know how accurate our models predictions are when we are training.</p>
+<p>Our <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> object aims to minimize the loss using the Adaptive Motion Estimation (Adam).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#creating the neural network</span>
+<span class="k">class</span> <span class="nc">Net</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Net</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+          <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">compute_first_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_input</span><span class="p">):</span>
+      <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="bp">self</span><span class="p">(</span><span class="n">x_input</span><span class="p">),</span> <span class="n">inputs</span><span class="o">=</span><span class="n">x_input</span><span class="p">,</span>
+                                               <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="n">x_input</span><span class="p">)),</span>
+                                               <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">second_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">x_input</span><span class="p">,</span>
+                                              <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">),</span>
+                                              <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+      <span class="n">third_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">second_derivative</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">x_input</span><span class="p">,</span>
+                                              <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">second_derivative</span><span class="p">),</span>
+                                              <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">first_derivative</span><span class="p">,</span> <span class="n">second_derivative</span><span class="p">,</span> <span class="n">third_derivative</span>
+<span class="n">d</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">15</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="set-up-training-process">
+<h2><strong>4. Set up training process</strong><a class="headerlink" href="#set-up-training-process" title="Link to this heading">#</a></h2>
+<p>Now that we have our network class we will train a model using our neural network.</p>
+<br>
+<p>Since we have created a PINN our regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) cannot be assumed as zero. Therefore by using PyTorch’s <code class="docutils literal notranslate"><span class="pre">autograd.grad()</span></code> function we can take the third derivative of the function (prior information) and ensure that the third derivative is as close to zero as possible.</p>
+<br>
+<p>Essentially regularization penalizes higher degree models in order to keep the model cohesive and follow analytical trends within certain boundaries.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#training function</span>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">lamda_reg</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+          <span class="n">x</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+          <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+          <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+          <span class="n">mse</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+          <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+          <span class="n">second_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+          <span class="n">third_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">second_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">second_derivative</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+          <span class="n">reg_term</span> <span class="o">=</span> <span class="n">third_derivative</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+          <span class="n">total_loss</span> <span class="o">=</span> <span class="n">mse</span> <span class="o">+</span> <span class="n">lamda_reg</span> <span class="o">*</span> <span class="n">reg_term</span>
+
+          <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+          <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+          <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="c1">#if epoch % 100 == 0:</span>
+          <span class="c1">#print(f&quot;Epoch {epoch+1}, total: {total_loss.item()}, mse: {mse.item()}, reg: {reg_term.item()}&quot;)</span>
+    <span class="k">return</span> <span class="n">losses</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="create-and-train-our-neural-network">
+<h2><strong>5. Create and Train our Neural Network</strong><a class="headerlink" href="#create-and-train-our-neural-network" title="Link to this heading">#</a></h2>
+<p>Now that we have set up a training process we can set certain parameters and train our model.</p>
+<p>Here we set a defined number of epochs to run our network for and set a regularization parameter. Finally we train our model and save it in a variable <code class="docutils literal notranslate"><span class="pre">losses</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">epochs</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Upon plotting the <strong>Training Loss over Epochs</strong> we see the function present represents exponential decay. The regularization we used in our model evidently worked to minimize the loss function using prior information.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">)),</span> <span class="n">losses</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training Loss Over Epochs&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Epochs&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/loss_epochs.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/031501fb924dcdffb12e6551f3726f4feef199d1a4dd6056f4e5dcf97079a039.png" src="_images/031501fb924dcdffb12e6551f3726f4feef199d1a4dd6056f4e5dcf97079a039.png" />
+</div>
+</div>
+<p>To understand how well our Neural Network performs on the synthetic data we created we plotted Neural Network on top of our Ground Truth line and noisy data.</p>
+<br>
+<p>Here the network fits our training data very well and continues outside the training interval. However as the model moves further off the training interval it starts to stray from the ground truth.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#plot the data points + line w/out noise</span>
+<span class="c1">#ask about how to improve for higher x values</span>
+<span class="n">x_network</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_network</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_network</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_network</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_network</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;nn&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_network</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_network</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ground truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;NN vs Data and Ground Truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/nn_vs_data.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b6192afefdba9bfb6af4cbbfffbddf8936156445b5560e451656c5ce7ad086d6.png" src="_images/b6192afefdba9bfb6af4cbbfffbddf8936156445b5560e451656c5ce7ad086d6.png" />
+</div>
+</div>
+</section>
+<section id="modify-regularization-parameter">
+<h2><strong>6. Modify Regularization Parameter</strong><a class="headerlink" href="#modify-regularization-parameter" title="Link to this heading">#</a></h2>
+<p>To better understand how the regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) effects our neural network we tested out different models with different <span class="math notranslate nohighlight">\(\lambda\)</span> values.</p>
+<br>
+<p>We created multiple models with their respective <span class="math notranslate nohighlight">\(\lambda\)</span> value and plotted them on the same axis to better understand the impact the <span class="math notranslate nohighlight">\(\lambda\)</span> value makes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reg_terms</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span>
+<span class="n">x_plot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Initialize models and optimizers</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">Net</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reg_terms</span><span class="p">))]</span>
+<span class="n">optimizers</span> <span class="o">=</span> <span class="p">[</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train each model with its corresponding regularization term</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">reg_term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reg_terms</span><span class="p">):</span>
+    <span class="n">train</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">reg_term</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#plot changes in reg term</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">model</span><span class="p">(</span><span class="n">x_plot</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;λ = </span><span class="si">{</span><span class="n">reg_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_plot</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ground truth&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y_i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Neural Networks With Different Reg. Terms&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/reg_changes.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/09f84148b5e3866c8f8462078eb7c480c98adadde3cdb3efd979fc37d2a2a47d.png" src="_images/09f84148b5e3866c8f8462078eb7c480c98adadde3cdb3efd979fc37d2a2a47d.png" />
+</div>
+</div>
+<p>Additionally we plotted the 1st, 2nd, and 3rd derivative of each model with different <span class="math notranslate nohighlight">\(\lambda\)</span> values to understand how the influence of the regularization parameter changes with each model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+    <span class="n">first_deriv</span><span class="p">,</span> <span class="n">second_deriv</span><span class="p">,</span> <span class="n">third_deriv</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">x_plot</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">first_deriv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;λ = </span><span class="si">{</span><span class="n">reg_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;First Derivatives Based on Reg. Term&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;1st Derivative&#39;</span><span class="p">)</span>
+
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">second_deriv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;λ = </span><span class="si">{</span><span class="n">reg_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Second Derivatives Based on Reg. Term&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;2nd derivative&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">third_deriv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;λ = </span><span class="si">{</span><span class="n">reg_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Third Derivatives Based on Reg. Term&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;3rd derivative&#39;</span><span class="p">)</span>
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/reg_derivs.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1f3594fe4aa653576d787703dd8e3098ad43b1102172279bf17b084978bb4fd4.png" src="_images/1f3594fe4aa653576d787703dd8e3098ad43b1102172279bf17b084978bb4fd4.png" />
+</div>
+</div>
+</section>
+<section id="calculate-mean-squared-error-mse">
+<h2><strong>7. Calculate Mean Squared Error (MSE)</strong><a class="headerlink" href="#calculate-mean-squared-error-mse" title="Link to this heading">#</a></h2>
+<p>To evaluate our model we calculated the Mean Squared Error (MSE) of our network on different intervals using the <code class="docutils literal notranslate"><span class="pre">criterion()</span></code> function</p>
+<br>
+<p>First we calculated the MSE on the interval <span class="math notranslate nohighlight">\([-1, 2]\)</span> to understand the overall accuracy of our model beyond the training data.</p>
+<br>
+<p>Second we calculated the MSE on the interval <span class="math notranslate nohighlight">\([0, 1]\)</span> to understand the accurary of our model on the training data points.</p>
+<br>
+<p>Finally we calculated the MSE on the interval <span class="math notranslate nohighlight">\([-1, 0] \: \cup \: [1, 2]\)</span> to understand the accuracy of our model outside the training data points.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#finding error</span>
+<span class="n">x_overall</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_overall</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+<span class="n">y_ground_truth</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+<span class="n">mse_ground_truth</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_overall</span><span class="p">,</span> <span class="n">y_ground_truth</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE for [-1, 2]: &#39;</span><span class="p">,</span> <span class="n">mse_ground_truth</span><span class="p">)</span>
+<span class="c1">#mean squared error is MSE</span>
+
+<span class="c1">#finding error inside interval [0, 1]</span>
+<span class="n">x_interval</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_interval</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_interval</span><span class="p">)</span>
+<span class="n">y_interval_net</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_interval</span><span class="p">)</span>
+<span class="n">mse_interval</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_interval_net</span><span class="p">,</span> <span class="n">y_interval</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE for [0, 1]: &#39;</span><span class="p">,</span> <span class="n">mse_interval</span><span class="p">)</span>
+
+<span class="c1">#finding error outside interval [0, 1]</span>
+<span class="n">x_bound1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x_bound2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x_bounds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x_bound1</span><span class="p">,</span> <span class="n">x_bound2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">y_bounds</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_bounds</span><span class="p">)</span>
+<span class="n">y_bounds_net</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_bounds</span><span class="p">)</span>
+<span class="n">mse_outside</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_bounds_net</span><span class="p">,</span> <span class="n">y_bounds</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE for [-1, 0]∪[1, 2]: &#39;</span><span class="p">,</span> <span class="n">mse_outside</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE for [-1, 2]:  0.21990685164928436
+MSE for [0, 1]:  0.0030593390110880136
+MSE for [-1, 0]∪[1, 2]:  0.3261967599391937
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="working-with-higher-order-regularization">
+<h2><strong>8. Working with Higher Order Regularization</strong><a class="headerlink" href="#working-with-higher-order-regularization" title="Link to this heading">#</a></h2>
+<p>We have explained the influence of the regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) in our model before. Now we will implement a higher order regularization to minimize the 4th derivative of the loss function instead of the 3rd derivative.</p>
+<br>
+<p>What this does is penalize higher order models, however, this model doesn’t penalize 3rd degree functions while our previous model did which can impact how well our network performs.</p>
+<br>
+<p>We also plot this new model on the ground truth to compare it to our previous model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using 4th derivative for regularization</span>
+<span class="k">def</span> <span class="nf">train_deriv4</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">lamda_reg</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+          <span class="n">x</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+          <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+          <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+          <span class="n">mse</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+          <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+          <span class="n">second_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">first_derivative</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+          <span class="n">third_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">second_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">second_derivative</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+          <span class="n">fourth_derivative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">third_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">third_derivative</span><span class="p">),</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+          <span class="n">reg_term</span> <span class="o">=</span> <span class="n">fourth_derivative</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+          <span class="n">total_loss</span> <span class="o">=</span> <span class="n">mse</span> <span class="o">+</span> <span class="n">lamda_reg</span> <span class="o">*</span> <span class="n">reg_term</span>
+
+          <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+          <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+          <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, total: </span><span class="si">{</span><span class="n">total_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">, mse: </span><span class="si">{</span><span class="n">mse</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">, reg: </span><span class="si">{</span><span class="n">reg_term</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">losses</span>
+
+
+<span class="n">model_deriv4</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model_deriv4</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">train_deriv4</span><span class="p">(</span><span class="n">model_deriv4</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_net_deriv4</span> <span class="o">=</span> <span class="n">model_deriv4</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE over [-1, 2] for 3rd Deriv Reg:&#39;</span><span class="p">,</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_net_deriv4</span><span class="p">,</span> <span class="n">y_ground_truth</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_overall</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_net_deriv4</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;NN with 4th derivative reg&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_overall</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ground truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x-i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y-i&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;NN with 4th Derivative Regularization&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/deriv4.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># what does this one being better tell us</span>
+<span class="c1">#use this plot to lead into the quadratic ground truth function</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1, total: 4.590548038482666, mse: 4.589435577392578, reg: 0.0011125693563371897
+Epoch 101, total: 0.4122336506843567, mse: 0.39842963218688965, reg: 0.013804015703499317
+Epoch 201, total: 0.3297002613544464, mse: 0.3254804313182831, reg: 0.004219832830131054
+Epoch 301, total: 0.21248939633369446, mse: 0.2017330676317215, reg: 0.010756336152553558
+Epoch 401, total: 0.10041166841983795, mse: 0.0949302688241005, reg: 0.005481400061398745
+Epoch 501, total: 0.059066761285066605, mse: 0.05575773864984512, reg: 0.0033090219367295504
+Epoch 601, total: 0.04065622016787529, mse: 0.03995320573449135, reg: 0.0007030147244222462
+Epoch 701, total: 0.03788269683718681, mse: 0.03730447217822075, reg: 0.0005782232619822025
+Epoch 801, total: 0.03618523105978966, mse: 0.03572513908147812, reg: 0.00046009087236598134
+Epoch 901, total: 0.03463149815797806, mse: 0.034228794276714325, reg: 0.0004027044924441725
+Epoch 1001, total: 0.03318805992603302, mse: 0.03282720968127251, reg: 0.000360850797733292
+Epoch 1101, total: 0.031844645738601685, mse: 0.03152742236852646, reg: 0.0003172227879986167
+Epoch 1201, total: 0.030610576272010803, mse: 0.030318647623062134, reg: 0.0002919280086643994
+Epoch 1301, total: 0.02949373796582222, mse: 0.029240548610687256, reg: 0.00025319011183455586
+Epoch 1401, total: 0.028478708118200302, mse: 0.028258968144655228, reg: 0.0002197390713263303
+Epoch 1501, total: 0.0275760255753994, mse: 0.027392372488975525, reg: 0.00018365342111792415
+Epoch 1601, total: 0.026916662231087685, mse: 0.02659926936030388, reg: 0.0003173928416799754
+Epoch 1701, total: 0.026034949347376823, mse: 0.025906261056661606, reg: 0.00012868872727267444
+Epoch 1801, total: 0.025384526699781418, mse: 0.025276008993387222, reg: 0.000108518244815059
+Epoch 1901, total: 0.024791516363620758, mse: 0.02469715289771557, reg: 9.436272375751287e-05
+Epoch 2001, total: 0.02424854226410389, mse: 0.024165330454707146, reg: 8.321270433953032e-05
+Epoch 2101, total: 0.023746030405163765, mse: 0.023667413741350174, reg: 7.861597987357527e-05
+Epoch 2201, total: 0.023554451763629913, mse: 0.023235145956277847, reg: 0.000319305487209931
+Epoch 2301, total: 0.022907061502337456, mse: 0.022734053432941437, reg: 0.00017300872423220426
+Epoch 2401, total: 0.02238062024116516, mse: 0.022303758189082146, reg: 7.686262688366696e-05
+Epoch 2501, total: 0.02195969596505165, mse: 0.02187459170818329, reg: 8.510369661962613e-05
+Epoch 2601, total: 0.02313629537820816, mse: 0.02142496593296528, reg: 0.0017113292124122381
+Epoch 2701, total: 0.021127568557858467, mse: 0.021032139658927917, reg: 9.542962652631104e-05
+Epoch 2801, total: 0.02071712166070938, mse: 0.02061007358133793, reg: 0.00010704869782784954
+Epoch 2901, total: 0.020319189876317978, mse: 0.020191028714179993, reg: 0.00012816052185371518
+Epoch 3001, total: 0.019870735704898834, mse: 0.01975019834935665, reg: 0.00012053731188643724
+Epoch 3101, total: 0.01943023130297661, mse: 0.01929955556988716, reg: 0.00013067488907836378
+Epoch 3201, total: 0.018964003771543503, mse: 0.018818896263837814, reg: 0.00014510678010992706
+Epoch 3301, total: 0.018472949042916298, mse: 0.018309909850358963, reg: 0.00016303916345350444
+Epoch 3401, total: 0.0187939815223217, mse: 0.017710870131850243, reg: 0.0010831112740561366
+Epoch 3501, total: 0.017379121854901314, mse: 0.01717219687998295, reg: 0.00020692408725153655
+Epoch 3601, total: 0.016956394538283348, mse: 0.016513800248503685, reg: 0.0004425941442605108
+Epoch 3701, total: 0.016111373901367188, mse: 0.015844037756323814, reg: 0.0002673360868357122
+Epoch 3801, total: 0.015421133488416672, mse: 0.015112198889255524, reg: 0.00030893442453816533
+Epoch 3901, total: 0.014675387181341648, mse: 0.014345265924930573, reg: 0.0003301212564110756
+Epoch 4001, total: 0.013943356461822987, mse: 0.013592565432190895, reg: 0.0003507908550091088
+Epoch 4101, total: 0.01817835494875908, mse: 0.012685048393905163, reg: 0.005493306089192629
+Epoch 4201, total: 0.012407833710312843, mse: 0.01201566495001316, reg: 0.0003921687602996826
+Epoch 4301, total: 0.01175212487578392, mse: 0.011319918558001518, reg: 0.0004322066088207066
+Epoch 4401, total: 0.010959014296531677, mse: 0.01052654255181551, reg: 0.0004324715118855238
+Epoch 4501, total: 0.010316426865756512, mse: 0.009913010522723198, reg: 0.0004034159646835178
+Epoch 4601, total: 0.01019045989960432, mse: 0.009357795119285583, reg: 0.0008326646639034152
+Epoch 4701, total: 0.009096375666558743, mse: 0.00869760476052761, reg: 0.00039877049857750535
+Epoch 4801, total: 0.008613728918135166, mse: 0.008241767063736916, reg: 0.00037196214543655515
+Epoch 4901, total: 0.008071432821452618, mse: 0.0076867141760885715, reg: 0.00038471826701425016
+MSE over [-1, 2] for 3rd Deriv Reg: 0.07414889335632324
+</pre></div>
+</div>
+<img alt="_images/58688d22ea4e7cb78d95464242fb87d3834e8e1b7c311984f63ac65efc7106a8.png" src="_images/58688d22ea4e7cb78d95464242fb87d3834e8e1b7c311984f63ac65efc7106a8.png" />
+</div>
+</div>
+</section>
+<section id="modify-number-of-layers-and-neurons">
+<h2><strong>9. Modify number of layers and neurons</strong><a class="headerlink" href="#modify-number-of-layers-and-neurons" title="Link to this heading">#</a></h2>
+<p>Finally to understand the impact of layers and neurons on our model we run different models with different layer, neuron configurations.</p>
+<br>
+<p>First we create a model with 1 layer and 1 neuron which isn’t as good at understand abstract trends within data</p>
+<br>
+<p>Second we create a model with 3 layers and 5 neurons which can understand some trends, however, its capacity to understand deeper trends within data may be limited which affects its accuracy</p>
+<br>
+<p>Third we create a model with 4 layers and 15 neurons which was the setup that we used for our first model and this model captures the training data effectively as well as trends beyond the data.</p>
+<br>
+<p>Finally we plot each model against the ground truth line and evidently the model with 4 layers and 15 neurons performs better and fits the ground truth beyond the training data points as well!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_test1</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model_test1</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">train</span><span class="p">(</span><span class="n">model_test1</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">model_test2</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model_test2</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">train</span><span class="p">(</span><span class="n">model_test2</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">model_test3</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model_test3</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">train</span><span class="p">(</span><span class="n">model_test3</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">y_net_test1</span> <span class="o">=</span> <span class="n">model_test1</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+<span class="n">y_net_test2</span> <span class="o">=</span> <span class="n">model_test2</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+<span class="n">y_net_test3</span> <span class="o">=</span> <span class="n">model_test3</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span>
+
+<span class="n">y_net_tests</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_net_test1</span><span class="p">,</span> <span class="n">y_net_test2</span><span class="p">,</span> <span class="n">y_net_test3</span><span class="p">]</span>
+<span class="n">ln</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">]]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_net_tests</span><span class="p">)):</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_overall</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_net_tests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ln</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> layer</span><span class="si">{</span><span class="n">ln</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">ln</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> neuron</span><span class="si">{</span><span class="n">ln</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1"> per layer&#39;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_overall</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ground_truth</span><span class="p">(</span><span class="n">x_overall</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ground truth&#39;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;NN Performance With Varying Layers and Neurons&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images_dir</span><span class="si">}</span><span class="s2">/layers_neurons.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1d85ff752375705ca5a182224b80ea0a42b60170dbf36201edd8384358b8733e.png" src="_images/1d85ff752375705ca5a182224b80ea0a42b60170dbf36201edd8384358b8733e.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Simple_NN_with_Regularization_recent.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Experimenting with a Linear Physics-Informed Neural Network (PINN)</strong></p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-setup"><strong>Problem Setup</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow"><strong>Workflow</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup"><strong>1. Environment Setup</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-noisy-data"><strong>2. Generate Noisy Data</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-neural-network-class"><strong>3. Set up Neural Network Class</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-training-process"><strong>4. Set up training process</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-and-train-our-neural-network"><strong>5. Create and Train our Neural Network</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-regularization-parameter"><strong>6. Modify Regularization Parameter</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-mean-squared-error-mse"><strong>7. Calculate Mean Squared Error (MSE)</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-higher-order-regularization"><strong>8. Working with Higher Order Regularization</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-number-of-layers-and-neurons"><strong>9. Modify number of layers and neurons</strong></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Ray Zirui Zhang
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
