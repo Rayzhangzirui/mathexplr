@@ -1,12 +1,13 @@
 
+
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="./" >
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Experimenting with a Quadratic Physics-Informed Neural Network (PINN) &#8212; 2024 UCI Math ExpLR Program</title>
   
@@ -18,45 +19,48 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'Quadratic_NN_with_Regularization';</script>
@@ -72,15 +76,7 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
-
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -115,14 +111,11 @@
 </form></div>
   </div>
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
-    </header>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -137,11 +130,9 @@
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
-
   
 
 <a class="navbar-brand logo" href="intro.html">
-  
   
   
   
@@ -151,29 +142,18 @@
       
     
     
-    <img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-light" alt="2024 UCI Math ExpLR Program - Home"/>
-    <script>document.write(`<img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-dark" alt="2024 UCI Math ExpLR Program - Home"/>`);</script>
+    <img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="https://cellfate.uci.edu/wp-content/uploads/sites/17/2024/03/2024MathExpLR_Logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
   
 </a></div>
-        <div class="sidebar-primary-item">
-
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
-        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="intro.html">
-                    Math ExpLr
+                    Welcome to the Math ExpLr Program
                 </a>
             </li>
         </ul>
@@ -333,22 +313,20 @@
 </button>
 
 
-
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
   </button>
 `);
 </script>
 
-
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+    <i class="fa-solid fa-magnifying-glass"></i>
   </button>
 `);
 </script>
@@ -395,15 +373,15 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="experimenting-with-a-quadratic-physics-informed-neural-network-pinn">
-<h1><strong>Experimenting with a Quadratic Physics-Informed Neural Network (PINN)</strong><a class="headerlink" href="#experimenting-with-a-quadratic-physics-informed-neural-network-pinn" title="Link to this heading">#</a></h1>
+<h1><strong>Experimenting with a Quadratic Physics-Informed Neural Network (PINN)</strong><a class="headerlink" href="#experimenting-with-a-quadratic-physics-informed-neural-network-pinn" title="Permalink to this heading">#</a></h1>
 <p>This notebook contains the code to create a PINN using PyTorch that can fit synthetic data with Gaussian noise around a quadratic function.</p>
 <br>
 <p>Essentially a PINN is a model that uses prior information inside the cost function to make the data more effective on sparse datasets and allows the model to understand deeper trends within the data to fit the ground-truth line outside of the training points as well.</p>
 <section id="problem-setup">
-<h2><strong>Problem Setup</strong><a class="headerlink" href="#problem-setup" title="Link to this heading">#</a></h2>
+<h2><strong>Problem Setup</strong><a class="headerlink" href="#problem-setup" title="Permalink to this heading">#</a></h2>
 <p>We will create a PINN to fit synthetic data with Gaussian noise arund the line.</p>
 <p><br>\begin{equation} y = ax^2 + bx + c \end{equation}<br></p>
 <p>In this instance the prior information in this PINN will look to minimize this basic differential equation.</p>
@@ -413,7 +391,7 @@ document.write(`
 <p>In this model we have manipulated the layers and neurons as well as tested out different regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) values. To better understand the impact these changes can make to our PINN.</p>
 </section>
 <section id="workflow">
-<h2><strong>Workflow</strong><a class="headerlink" href="#workflow" title="Link to this heading">#</a></h2>
+<h2><strong>Workflow</strong><a class="headerlink" href="#workflow" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Environment Setup</p></li>
 <li><p>Generate noisy data</p></li>
@@ -427,7 +405,7 @@ document.write(`
 </ol>
 </section>
 <section id="environment-setup">
-<h2><strong>1. Environment Setup</strong><a class="headerlink" href="#environment-setup" title="Link to this heading">#</a></h2>
+<h2><strong>1. Environment Setup</strong><a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h2>
 <p>First we mount the notebook to Google Drive to store all the figures created</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -444,13 +422,14 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">folders</span><span class="o">/</span><span class="mi">3</span><span class="n">b</span><span class="o">/</span><span class="n">sldzpq7d6h9gbk6l26n1g20w0000gn</span><span class="o">/</span><span class="n">T</span><span class="o">/</span><span class="n">ipykernel_30375</span><span class="o">/</span><span class="mf">2031246603.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
 <span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">os</span>
 <span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
 <span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># Mount Google Drive</span>
 <span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
 
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;google&#39;
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;google.colab&#39;
 </pre></div>
 </div>
 </div>
@@ -478,7 +457,7 @@ document.write(`
 </div>
 </section>
 <section id="generate-noisy-data">
-<h2><strong>2. Generate Noisy Data</strong><a class="headerlink" href="#generate-noisy-data" title="Link to this heading">#</a></h2>
+<h2><strong>2. Generate Noisy Data</strong><a class="headerlink" href="#generate-noisy-data" title="Permalink to this heading">#</a></h2>
 <p>Using the equation</p>
 <p><br>\begin{equation} y = ax^2 + bx + c + \epsilon \end{equation}<br></p>
 <p>Where <span class="math notranslate nohighlight">\(\epsilon\)</span> is the Gaussian noise; we generate data around the line <span class="math notranslate nohighlight">\(y = ax^2 + bx + c\)</span>.</p>
@@ -567,7 +546,7 @@ tensor([[1.0684],
 </div>
 </section>
 <section id="set-up-neural-network-class">
-<h2><strong>3. Set up Neural Network Class</strong><a class="headerlink" href="#set-up-neural-network-class" title="Link to this heading">#</a></h2>
+<h2><strong>3. Set up Neural Network Class</strong><a class="headerlink" href="#set-up-neural-network-class" title="Permalink to this heading">#</a></h2>
 <p>We set up a standard neural network where <code class="docutils literal notranslate"><span class="pre">d</span></code> and <code class="docutils literal notranslate"><span class="pre">w</span></code> represent the number of layers and neurons in the network respectively. Using the Tanh activation function we can introduce non-linearities to allow the model to understand deep trends in seemigly abstract data.</p>
 <br>
 <p>The <code class="docutils literal notranslate"><span class="pre">compute_first_derivative()</span></code> function computes the <span class="math notranslate nohighlight">\(1 - n\)</span>th derivative using PyTorch’s autodifferentiation features.</p>
@@ -618,7 +597,7 @@ tensor([[1.0684],
 </div>
 </section>
 <section id="set-up-training-process">
-<h2><strong>4. Set up training process</strong><a class="headerlink" href="#set-up-training-process" title="Link to this heading">#</a></h2>
+<h2><strong>4. Set up training process</strong><a class="headerlink" href="#set-up-training-process" title="Permalink to this heading">#</a></h2>
 <p>Now that we have our network class we will train a model using our neural network.</p>
 <br>
 <p>Since we have created a PINN our regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) cannot be assumed as zero. Therefore by using PyTorch’s <code class="docutils literal notranslate"><span class="pre">autograd.grad()</span></code> function we can take the third derivative of the function (prior information) and ensure that the third derivative is as close to zero as possible.</p>
@@ -659,7 +638,7 @@ tensor([[1.0684],
 </div>
 </section>
 <section id="create-and-train-our-neural-network">
-<h2><strong>5. Create and Train our Neural Network</strong><a class="headerlink" href="#create-and-train-our-neural-network" title="Link to this heading">#</a></h2>
+<h2><strong>5. Create and Train our Neural Network</strong><a class="headerlink" href="#create-and-train-our-neural-network" title="Permalink to this heading">#</a></h2>
 <p>Now that we have set up a training process we can set certain parameters and train our model.</p>
 <p>Here we set a defined number of epochs to run our network for and set a regularization parameter. Finally we train our model and save it in a variable <code class="docutils literal notranslate"><span class="pre">losses</span></code>.</p>
 <div class="cell docutils container">
@@ -716,7 +695,7 @@ tensor([[1.0684],
 </div>
 </section>
 <section id="modify-regularization-parameter">
-<h2><strong>6. Modify Regularization Parameter</strong><a class="headerlink" href="#modify-regularization-parameter" title="Link to this heading">#</a></h2>
+<h2><strong>6. Modify Regularization Parameter</strong><a class="headerlink" href="#modify-regularization-parameter" title="Permalink to this heading">#</a></h2>
 <p>To better understand how the regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) effects our neural network we tested out different models with different <span class="math notranslate nohighlight">\(\lambda\)</span> values.</p>
 <br>
 <p>We created multiple models with their respective <span class="math notranslate nohighlight">\(\lambda\)</span> value and plotted them on the same axis to better understand the impact the <span class="math notranslate nohighlight">\(\lambda\)</span> value makes.</p>
@@ -805,7 +784,7 @@ tensor([[1.0684],
 </div>
 </section>
 <section id="calculate-mean-squared-error-mse">
-<h2><strong>7. Calculate Mean Squared Error (MSE)</strong><a class="headerlink" href="#calculate-mean-squared-error-mse" title="Link to this heading">#</a></h2>
+<h2><strong>7. Calculate Mean Squared Error (MSE)</strong><a class="headerlink" href="#calculate-mean-squared-error-mse" title="Permalink to this heading">#</a></h2>
 <p>To evaluate our model we calculated the Mean Squared Error (MSE) of our network on different intervals using the <code class="docutils literal notranslate"><span class="pre">criterion()</span></code> function</p>
 <br>
 <p>First we calculated the MSE on the interval <span class="math notranslate nohighlight">\([-1, 2]\)</span> to understand the overall accuracy of our model beyond the training data.</p>
@@ -851,7 +830,7 @@ MSE for [-1, 0]∪[1, 2]:  0.3261967599391937
 </div>
 </section>
 <section id="working-with-higher-order-regularization">
-<h2><strong>8. Working with Higher Order Regularization</strong><a class="headerlink" href="#working-with-higher-order-regularization" title="Link to this heading">#</a></h2>
+<h2><strong>8. Working with Higher Order Regularization</strong><a class="headerlink" href="#working-with-higher-order-regularization" title="Permalink to this heading">#</a></h2>
 <p>We have explained the influence of the regularization parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) in our model before. Now we will implement a higher order regularization to minimize the 4th derivative of the loss function instead of the 3rd derivative.</p>
 <br>
 <p>What this does is penalize higher order models, however, this model doesn’t penalize 3rd degree functions while our previous model did which can impact how well our network performs.</p>
@@ -966,7 +945,7 @@ MSE over [-1, 2] for 3rd Deriv Reg: 0.07414889335632324
 </div>
 </section>
 <section id="modify-number-of-layers-and-neurons">
-<h2><strong>9. Modify number of layers and neurons</strong><a class="headerlink" href="#modify-number-of-layers-and-neurons" title="Link to this heading">#</a></h2>
+<h2><strong>9. Modify number of layers and neurons</strong><a class="headerlink" href="#modify-number-of-layers-and-neurons" title="Permalink to this heading">#</a></h2>
 <p>Finally to understand the impact of layers and neurons on our model we run different models with different layer, neuron configurations.</p>
 <br>
 <p>First we create a model with 1 layer and 1 neuron which isn’t as good at understand abstract trends within data</p>
@@ -1046,10 +1025,11 @@ MSE over [-1, 2] for 3rd Deriv Reg: 0.07414889335632324
 
               
               
-              
-              
-                <footer class="prev-next-footer">
+                <footer class="bd-footer-article">
                   
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="Simple_NN_with_Regularization_recent.html"
@@ -1060,7 +1040,10 @@ MSE over [-1, 2] for 3rd Deriv Reg: 0.07414889335632324
         <p class="prev-next-title"><strong>Experimenting with a Linear Physics-Informed Neural Network (PINN)</strong></p>
       </div>
     </a>
+</div></div>
+  
 </div>
+
                 </footer>
               
             </div>
@@ -1068,7 +1051,6 @@ MSE over [-1, 2] for 3rd Deriv Reg: 0.07414889335632324
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -1108,10 +1090,9 @@ By Ray Zirui Zhang
   
   <div class="footer-item">
     
-
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2022.
       <br/>
     
   </p>
@@ -1135,8 +1116,8 @@ By Ray Zirui Zhang
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
   </footer>
